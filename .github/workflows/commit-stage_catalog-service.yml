@@ -20,10 +20,10 @@ jobs:
           java-version: 17
           cache: gradle
       - name: Build, unit tests and integration tests
-          run: |
-            cd catalog-service
-            chmod +X gradlew
-            ./gradlew build
+        run: |
+          cd catalog-service
+          chmod +x gradlew
+          ./gradlew build
       - name: Code vulnerability scanning
         uses: anchore/scan-action@v3
         id: scan
