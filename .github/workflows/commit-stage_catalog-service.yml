@@ -28,7 +28,7 @@ jobs:
         uses: anchore/scan-action@v3
         id: scan
         with:
-          path: "${{ github.workplace/catalog-service }}"
+          path: "${{ github.workplace }}/catalog-service"
           fail-build: false
           severity-cutoff: high
           acs-report-enable: true
