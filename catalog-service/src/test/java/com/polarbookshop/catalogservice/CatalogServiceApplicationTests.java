@@ -16,7 +16,7 @@ class CatalogServiceApplicationTests {
 
     @Test
     void whenPostRequestThenBookCreated() {
-        Book book = new Book("1234567891", "Book", "Author of this book", 12.3);
+        Book book = Book.of("1234567891", "Book", "Author of this book", 12.3);
         webTestClient.post()
                 .uri("/books")
                 .bodyValue(book)
@@ -31,7 +31,7 @@ class CatalogServiceApplicationTests {
     @Test
     void whenGetRequestWithIdThenBookReturned() {
         String isbn = "1234567892";
-        Book book = new Book(isbn, "Book", "Author of this book", 12.3);
+        Book book = Book.of(isbn, "Book", "Author of this book", 12.3);
         Book createdBook = webTestClient
                 .post()
                 .uri("/books")
@@ -56,7 +56,7 @@ class CatalogServiceApplicationTests {
     @Test
     void whenPutRequestThenBookUpdated() {
         String isbn = "1234567890";
-        Book book = new Book(isbn, "Book", "Author of this book", 12.3);
+        Book book = Book.of(isbn, "Book", "Author of this book", 12.3);
         Book createdBook = webTestClient
                 .post()
                 .uri("/books")
@@ -67,7 +67,7 @@ class CatalogServiceApplicationTests {
                 .value(b -> assertThat(b).isNotNull())
                 .returnResult().getResponseBody();
 
-        Book bookToUpdated = new Book(createdBook.isbn(), createdBook.title(), createdBook.author(), 100.0);
+        Book bookToUpdated = Book.of(createdBook.isbn(), createdBook.title(), createdBook.author(), 100.0);
         webTestClient
                 .put()
                 .uri("/books/" + bookToUpdated.isbn())
@@ -87,7 +87,7 @@ class CatalogServiceApplicationTests {
     @Test
     void whenDeleteRequestThenBookDeleted() {
         String isbn = "1234567890";
-        Book book = new Book(isbn, "Book", "Author of this book", 12.3);
+        Book book = Book.of(isbn, "Book", "Author of this book", 12.3);
         webTestClient
                 .post()
                 .uri("/books")
