@@ -1,4 +1,3 @@
-drop table IF EXISTS book;
 create TABLE book (
 id      BIGSERIAL PRIMARY KEY NOT NULL,
 author    varchar(255) NOT NULL,

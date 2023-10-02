@@ -29,9 +29,6 @@ spring:
     hikari:
       connection-timeout: 2000
       maximum-pool-size: 5
-  sql:
-    init:
-      mode: ALWAYS
 management:
   endpoints:
     web:
