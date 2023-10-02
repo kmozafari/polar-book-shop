@@ -29,12 +29,12 @@ public class BookRepositoryJdbcTests {
 
     @Test
     void findAllBooks() {
-        var book1 = Book.of("1234567891", "title1", "author1", 12.0);
-        var book2 = Book.of("1234567892", "title2", "author2", 13.0);
+        var book1 = Book.of("1234567893", "title1", "author1", 12.0);
+        var book2 = Book.of("1234567894", "title2", "author2", 13.0);
         jdbcAggregateTemplate.saveAll(List.of(book1, book2));
         Iterable<Book> actualBooks = bookRepository.findAll();
         assertThat(StreamSupport.stream(actualBooks.spliterator(), true)
-                .filter(book -> book.isbn().equals("1234567891") || book.isbn().equals("1234567892"))
+                .filter(book -> book.isbn().equals("1234567893") || book.isbn().equals("1234567894"))
                 .toList().size()).isEqualTo(2);
     }
 
@@ -50,7 +50,7 @@ public class BookRepositoryJdbcTests {
     @Test
     void findBookByIsbnWhenNotExisting() {
         jdbcAggregateTemplate.insert(Book.of("1234567890", "title", "author", 12.4));
-        Optional<Book> actualBook = bookRepository.findByIsbn("1234567891");
+        Optional<Book> actualBook = bookRepository.findByIsbn("1234567894");
         assertThat(actualBook).isEmpty();
     }
 
@@ -65,7 +65,7 @@ public class BookRepositoryJdbcTests {
     @Test
     void existsByIsbnWhenNotExisting() {
         jdbcAggregateTemplate.insert(Book.of("1234567890", "title", "author", 12.4));
-        boolean exists = bookRepository.existsByIsbn("1234567891");
+        boolean exists = bookRepository.existsByIsbn("1234567894");
         assertThat(exists).isFalse();
     }
 
