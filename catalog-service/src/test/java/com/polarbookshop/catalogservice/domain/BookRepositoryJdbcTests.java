@@ -40,7 +40,7 @@ public class BookRepositoryJdbcTests {
 
     @Test
     void findBookByIsbnWhenExisting() {
-        var bookIsbn = "1234567890";
+        var bookIsbn = "1234567895";
         jdbcAggregateTemplate.insert(Book.of(bookIsbn, "title", "author", 12.4));
         Optional<Book> actualBook = bookRepository.findByIsbn(bookIsbn);
         assertThat(actualBook).isPresent();
@@ -49,14 +49,13 @@ public class BookRepositoryJdbcTests {
 
     @Test
     void findBookByIsbnWhenNotExisting() {
-        jdbcAggregateTemplate.insert(Book.of("1234567890", "title", "author", 12.4));
-        Optional<Book> actualBook = bookRepository.findByIsbn("1234567894");
+        Optional<Book> actualBook = bookRepository.findByIsbn("1234567898");
         assertThat(actualBook).isEmpty();
     }
 
     @Test
     void existsByIsbnWhenExisting() {
-        var bookIsbn = "1234567890";
+        var bookIsbn = "123456789";
         jdbcAggregateTemplate.insert(Book.of(bookIsbn, "title", "author", 12.4));
         boolean exists = bookRepository.existsByIsbn(bookIsbn);
         assertThat(exists).isTrue();
@@ -64,15 +63,14 @@ public class BookRepositoryJdbcTests {
 
     @Test
     void existsByIsbnWhenNotExisting() {
-        jdbcAggregateTemplate.insert(Book.of("1234567890", "title", "author", 12.4));
-        boolean exists = bookRepository.existsByIsbn("1234567894");
+        boolean exists = bookRepository.existsByIsbn("1234567890");
         assertThat(exists).isFalse();
     }
 
     @Test
     void deleteByIsbn() {
-        String isbn = "1234567890";
-        Book persistedBook = jdbcAggregateTemplate.insert(Book.of("1234567890", "title", "author", 12.4));
+        String isbn = "1234567897";
+        Book persistedBook = jdbcAggregateTemplate.insert(Book.of(isbn, "title", "author", 12.4));
         bookRepository.deleteByIsbn(isbn);
         Book book = jdbcAggregateTemplate.findById(persistedBook.id(), Book.class);
         assertThat(book).isNull();
