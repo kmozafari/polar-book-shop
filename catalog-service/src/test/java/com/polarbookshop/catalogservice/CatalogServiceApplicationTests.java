@@ -18,7 +18,7 @@ class CatalogServiceApplicationTests {
 
     @Test
     void whenPostRequestThenBookCreated() {
-        Book book = Book.of("1212121212", "Book", "Author of this book", 12.3);
+        Book book = Book.of("1212121212", "Book", "Author of this book", 12.3, "publisher");
         webTestClient.post()
                 .uri("/books")
                 .bodyValue(book)
@@ -33,7 +33,7 @@ class CatalogServiceApplicationTests {
     @Test
     void whenGetRequestWithIdThenBookReturned() {
         String isbn = "1313131313";
-        Book book = Book.of(isbn, "Book", "Author of this book", 12.3);
+        Book book = Book.of(isbn, "Book", "Author of this book", 12.3, "publisher");
         Book createdBook = webTestClient
                 .post()
                 .uri("/books")
@@ -58,7 +58,7 @@ class CatalogServiceApplicationTests {
     @Test
     void whenPutRequestThenBookUpdated() {
         String isbn = "1414141414";
-        Book book = Book.of(isbn, "Book", "Author of this book", 12.3);
+        Book book = Book.of(isbn, "Book", "Author of this book", 12.3, "publisher");
         Book createdBook = webTestClient
                 .post()
                 .uri("/books")
@@ -69,7 +69,7 @@ class CatalogServiceApplicationTests {
                 .value(b -> assertThat(b).isNotNull())
                 .returnResult().getResponseBody();
 
-        Book bookToUpdated = Book.of(createdBook.isbn(), createdBook.title(), createdBook.author(), 100.0);
+        Book bookToUpdated = Book.of(createdBook.isbn(), createdBook.title(), createdBook.author(), 100.0, "publisher");
         webTestClient
                 .put()
                 .uri("/books/" + bookToUpdated.isbn())
@@ -89,7 +89,7 @@ class CatalogServiceApplicationTests {
     @Test
     void whenDeleteRequestThenBookDeleted() {
         String isbn = "1515151515";
-        Book book = Book.of(isbn, "Book", "Author of this book", 12.3);
+        Book book = Book.of(isbn, "Book", "Author of this book", 12.3, "publisher");
         webTestClient
                 .post()
                 .uri("/books")

@@ -29,8 +29,8 @@ public class BookRepositoryJdbcTests {
 
     @Test
     void findAllBooks() {
-        var book1 = Book.of("1234567893", "title1", "author1", 12.0);
-        var book2 = Book.of("1234567894", "title2", "author2", 13.0);
+        var book1 = Book.of("1234567893", "title1", "author1", 12.0,"publisher");
+        var book2 = Book.of("1234567894", "title2", "author2", 13.0,"publisher");
         jdbcAggregateTemplate.saveAll(List.of(book1, book2));
         Iterable<Book> actualBooks = bookRepository.findAll();
         assertThat(StreamSupport.stream(actualBooks.spliterator(), true)
@@ -41,7 +41,7 @@ public class BookRepositoryJdbcTests {
     @Test
     void findBookByIsbnWhenExisting() {
         var bookIsbn = "1234567895";
-        jdbcAggregateTemplate.insert(Book.of(bookIsbn, "title", "author", 12.4));
+        jdbcAggregateTemplate.insert(Book.of(bookIsbn, "title", "author", 12.4,"publisher"));
         Optional<Book> actualBook = bookRepository.findByIsbn(bookIsbn);
         assertThat(actualBook).isPresent();
         assertThat(actualBook.get().isbn()).isEqualTo(bookIsbn);
@@ -56,7 +56,7 @@ public class BookRepositoryJdbcTests {
     @Test
     void existsByIsbnWhenExisting() {
         var bookIsbn = "123456789";
-        jdbcAggregateTemplate.insert(Book.of(bookIsbn, "title", "author", 12.4));
+        jdbcAggregateTemplate.insert(Book.of(bookIsbn, "title", "author", 12.4,"publisher"));
         boolean exists = bookRepository.existsByIsbn(bookIsbn);
         assertThat(exists).isTrue();
     }
@@ -70,7 +70,7 @@ public class BookRepositoryJdbcTests {
     @Test
     void deleteByIsbn() {
         String isbn = "1234567897";
-        Book persistedBook = jdbcAggregateTemplate.insert(Book.of(isbn, "title", "author", 12.4));
+        Book persistedBook = jdbcAggregateTemplate.insert(Book.of(isbn, "title", "author", 12.4,"publisher"));
         bookRepository.deleteByIsbn(isbn);
         Book book = jdbcAggregateTemplate.findById(persistedBook.id(), Book.class);
         assertThat(book).isNull();
