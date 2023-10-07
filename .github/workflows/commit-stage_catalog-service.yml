@@ -60,6 +60,7 @@ jobs:
           cache: gradle
       - name: Build container image
         run: |
+          cd catalog-service
           chmod +x gradlew
           ./gradlew bootBuildImage --imageName ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
 
