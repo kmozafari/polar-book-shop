@@ -40,6 +40,13 @@ jobs:
         if: success() || failure()
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
+      - name: Validate Kubernetes manifests
+        run: echo "${{ github.token }}" | docker login https://ghcr.io -u ${GITHUB_ACTOR} --password-stdin
+        uses: docker://ghcr.io/yannh/kubeconform:latest
+        with:
+          entrypoint: '/kubeconform'
+          args: "-strict -summary -output json k8s/"
+
   package:
     name: Package and Publish
     if: ${{ github.ref == 'refs/heads/main' }}
