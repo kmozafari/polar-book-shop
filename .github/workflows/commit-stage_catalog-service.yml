@@ -45,7 +45,7 @@ jobs:
       - uses: docker://ghcr.io/yannh/kubeconform:latest
         with:
           entrypoint: '/kubeconform'
-          args: "-strict -summary -output json k8s/"
+          args: "-strict -summary -output json catalog-service/k8s/"
 
   package:
     name: Package and Publish
