@@ -1,4 +1,4 @@
-package com.polarbookshop.orderservice.domain;
+package com.polarbookshop.orderservice.order.domain;
 
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 
