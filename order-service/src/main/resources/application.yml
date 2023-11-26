@@ -54,6 +54,11 @@ spring:
     username: user
     password: password
     connection-timeout: 5s
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/PolarBookshop
 
 management:
   endpoints:
