@@ -20,10 +20,10 @@ import reactor.test.StepVerifier;
 public class OrderRepositoryR2dbcTests {
 
     @Container
-    private static PostgreSQLContainer<?> postgresql = new PostgreSQLContainer<>(DockerImageName.parse("postgres:14.4"));
+    private static PostgreSQLContainer<?> postgresql =
+            new PostgreSQLContainer<>(DockerImageName.parse("postgres:14.4"));
 
-    @Autowired
-    private OrderRepository orderRepository;
+    @Autowired private OrderRepository orderRepository;
 
     @DynamicPropertySource
     public static void postgresqlProperties(DynamicPropertyRegistry registry) {
@@ -34,7 +34,8 @@ public class OrderRepositoryR2dbcTests {
     }
 
     private static String r2dbcUrl() {
-        return String.format("r2dbc:postgresql://%s:%s/%s",
+        return String.format(
+                "r2dbc:postgresql://%s:%s/%s",
                 postgresql.getHost(),
                 postgresql.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT),
                 postgresql.getDatabaseName());
@@ -43,9 +44,7 @@ public class OrderRepositoryR2dbcTests {
     @Test
     public void findOrderByIdWhenNotExisting() {
         Mono<Order> order = orderRepository.findById(1000L);
-        StepVerifier.create(order)
-                .expectNextCount(0)
-                .verifyComplete();
+        StepVerifier.create(order).expectNextCount(0).verifyComplete();
     }
 
     @Test
@@ -56,5 +55,4 @@ public class OrderRepositoryR2dbcTests {
                 .expectNextMatches(o -> OrderStatus.REJECTED.equals(o.status()))
                 .verifyComplete();
     }
-
 }
