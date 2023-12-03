@@ -18,16 +18,18 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/", "/books/**")
-                        .permitAll()
-                        .anyRequest()
-                        .hasRole("employee"))
-                .oauth2ResourceServer(configurer ->
-                        configurer.jwt(Customizer.withDefaults()))
-                .sessionManagement(sessionManagement ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        return http.authorizeHttpRequests(
+                        authorize ->
+                                authorize
+                                        .requestMatchers(HttpMethod.GET, "/", "/books/**")
+                                        .permitAll()
+                                        .anyRequest()
+                                        .hasRole("employee"))
+                .oauth2ResourceServer(configurer -> configurer.jwt(Customizer.withDefaults()))
+                .sessionManagement(
+                        sessionManagement ->
+                                sessionManagement.sessionCreationPolicy(
+                                        SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();
     }
@@ -38,7 +40,8 @@ public class SecurityConfig {
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
         jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
         var jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(
+                jwtGrantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
     }
 }
