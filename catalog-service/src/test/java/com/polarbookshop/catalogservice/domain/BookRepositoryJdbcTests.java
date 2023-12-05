@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.polarbookshop.catalogservice.config.DataConfig;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJdbcTest
@@ -78,5 +80,39 @@ public class BookRepositoryJdbcTests {
         bookRepository.deleteByIsbn(isbn);
         Book book = jdbcAggregateTemplate.findById(persistedBook.id(), Book.class);
         assertThat(book).isNull();
+    }
+
+    @Test
+    void whenCreatedBookNotAuthenticatedThenNoAuditMetaData() {
+        var book1 = Book.of("1234567893", "title1", "author1", 12.0, "publisher");
+        jdbcAggregateTemplate.saveAll(List.of(book1));
+        Iterable<Book> actualBooks = bookRepository.findAll();
+        assertThat(
+                        StreamSupport.stream(actualBooks.spliterator(), true)
+                                .filter(
+                                        book ->
+                                                book.isbn().equals("1234567893")
+                                                        && book.createdBy() == null)
+                                .toList()
+                                .size())
+                .isEqualTo(1);
+    }
+
+    @Test
+    @WithMockUser(username = "kourosh")
+    void whenCreatedBookWithAuthenticatedThenAuditMetaData() {
+        var book1 = Book.of("1234567893", "title1", "author1", 12.0, "publisher");
+        jdbcAggregateTemplate.saveAll(List.of(book1));
+        Iterable<Book> actualBooks = bookRepository.findAll();
+        assertThat(
+                        StreamSupport.stream(actualBooks.spliterator(), true)
+                                .filter(
+                                        book ->
+                                                book.isbn().equals("1234567893")
+                                                        && Objects.equals(
+                                                                book.createdBy(), "kourosh"))
+                                .toList()
+                                .size())
+                .isEqualTo(1);
     }
 }

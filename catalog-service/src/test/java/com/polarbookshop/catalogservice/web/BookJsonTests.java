@@ -30,6 +30,8 @@ public class BookJsonTests {
                         "pub",
                         date,
                         date,
+                        "Kourosh",
+                        "Ali",
                         3);
         JsonContent<Book> jsonContent = json.write(book);
         assertThat(jsonContent)
@@ -49,6 +51,12 @@ public class BookJsonTests {
                 .extractingJsonPathStringValue("@.lastModifiedDate")
                 .isEqualTo(date.toString());
         assertThat(jsonContent)
+                .extractingJsonPathStringValue("@.createdBy")
+                .isEqualTo(book.createdBy());
+        assertThat(jsonContent)
+                .extractingJsonPathStringValue("@.lastModifiedBy")
+                .isEqualTo(book.lastModifiedBy());
+        assertThat(jsonContent)
                 .extractingJsonPathNumberValue("@.version")
                 .isEqualTo(book.version());
     }
@@ -58,18 +66,20 @@ public class BookJsonTests {
         Instant date = Instant.parse("2023-10-01T10:57:36.896685028Z");
         String content =
                 """
-                {
-                    "id": 1,
-                    "isbn":"1234567891",
-                    "title":"Book 1",
-                    "author":"mr. author",
-                    "price": 12.34,
-                    "publisher": "pub",
-                    "createdDate": "2023-10-01T10:57:36.896685028Z",
-                    "lastModifiedDate":"2023-10-01T10:57:36.896685028Z",
-                    "version": 2
-                }
-                """;
+                        {
+                            "id": 1,
+                            "isbn":"1234567891",
+                            "title":"Book 1",
+                            "author":"mr. author",
+                            "price": 12.34,
+                            "publisher": "pub",
+                            "createdDate": "2023-10-01T10:57:36.896685028Z",
+                            "lastModifiedDate":"2023-10-01T10:57:36.896685028Z",
+                            "createdBy":"kourosh",
+                            "lastModifiedBy":"ali",
+                            "version": 2
+                        }
+                        """;
         ObjectContent<Book> objectContent = json.parse(content);
         assertThat(objectContent)
                 .usingRecursiveComparison()
@@ -83,6 +93,8 @@ public class BookJsonTests {
                                 "pub",
                                 date,
                                 date,
+                                "kourosh",
+                                "ali",
                                 2));
     }
 }
