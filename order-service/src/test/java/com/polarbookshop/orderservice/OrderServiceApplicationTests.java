@@ -164,7 +164,7 @@ class OrderServiceApplicationTests {
                 webTestClient
                         .post()
                         .uri("/orders")
-                        .headers(httpHeaders -> httpHeaders.setBearerAuth(isabelleToken.token()))
+                        .headers(httpHeaders -> httpHeaders.setBearerAuth(bjornToken.token()))
                         .bodyValue(new OrderRequest(isbn, 1))
                         .exchange()
                         .expectStatus()
@@ -193,6 +193,40 @@ class OrderServiceApplicationTests {
                                                         .filter(o -> o.bookIsbn().equals(isbn))
                                                         .findAny())
                                         .isNotEmpty());
+    }
+
+    @Test
+    public void whenGetOrdersWithAnotherUserThenReturnNothing() throws IOException {
+        String isbn = "2134567891";
+        Book book = new Book(isbn, "book name", "author1", 12.5);
+        given(bookClient.getBookByIsbn(isbn)).willReturn(Mono.just(book));
+        Order expectedOrder =
+                webTestClient
+                        .post()
+                        .uri("/orders")
+                        .headers(httpHeaders -> httpHeaders.setBearerAuth(isabelleToken.token()))
+                        .bodyValue(new OrderRequest(isbn, 1))
+                        .exchange()
+                        .expectStatus()
+                        .is2xxSuccessful()
+                        .expectBody(Order.class)
+                        .returnResult()
+                        .getResponseBody();
+        assertThat(expectedOrder).isNotNull();
+        assertThat(
+                        objectMapper.readValue(
+                                outputDestination.receive().getPayload(),
+                                OrderAcceptedMessage.class))
+                .isEqualTo(new OrderAcceptedMessage(expectedOrder.id()));
+        webTestClient
+                .get()
+                .uri("/orders")
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(bjornToken.token()))
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful()
+                .expectBodyList(Order.class)
+                .value(orders -> assertThat(orders.isEmpty()));
     }
 
     @Test

@@ -23,7 +23,17 @@ public class OrderJsonTests {
         Instant now = Instant.now();
         Order order =
                 new Order(
-                        1L, "1234567890", "book name", 12.3, 3, OrderStatus.ACCEPTED, now, now, 1);
+                        1L,
+                        "1234567890",
+                        "book name",
+                        12.3,
+                        3,
+                        OrderStatus.ACCEPTED,
+                        now,
+                        now,
+                        "kourosh",
+                        "ali",
+                        1);
         JsonContent<Order> orderJson = jacksonTester.write(order);
         assertThat(orderJson)
                 .extractingJsonPathNumberValue("@.id")
@@ -49,6 +59,12 @@ public class OrderJsonTests {
         assertThat(orderJson)
                 .extractingJsonPathStringValue("@.lastModifiedDate")
                 .isEqualTo(order.lastModifiedDate().toString());
+        assertThat(orderJson)
+                .extractingJsonPathStringValue("@.createdBy")
+                .isEqualTo(order.createdBy());
+        assertThat(orderJson)
+                .extractingJsonPathStringValue("@.lastModifiedBy")
+                .isEqualTo(order.lastModifiedBy());
         assertThat(orderJson).extractingJsonPathNumberValue("@.version").isEqualTo(order.version());
     }
 
@@ -57,18 +73,20 @@ public class OrderJsonTests {
         Instant now = Instant.now();
         String orderJson =
                 """
-                {
-                    "id":1,
-                    "bookIsbn":"1234567890",
-                    "bookName":"book name",
-                    "bookPrice":12.3,
-                    "quantity":3,
-                    "status":"REJECTED",
-                    "createdDate":"%s",
-                    "lastModifiedDate":"%s",
-                    "version":1
-                }
-                """
+                        {
+                            "id":1,
+                            "bookIsbn":"1234567890",
+                            "bookName":"book name",
+                            "bookPrice":12.3,
+                            "quantity":3,
+                            "status":"REJECTED",
+                            "createdDate":"%s",
+                            "lastModifiedDate":"%s",
+                            "createdBy":"kourosh",
+                            "lastModifiedBy":"ali",
+                            "version":1
+                        }
+                        """
                         .formatted(now.toString(), now.toString());
         ObjectContent<Order> order = jacksonTester.parse(orderJson);
         assertThat(order)
@@ -83,6 +101,8 @@ public class OrderJsonTests {
                                 OrderStatus.REJECTED,
                                 now,
                                 now,
+                                "kourosh",
+                                "ali",
                                 1));
     }
 }
