@@ -1,16 +1,15 @@
 package com.polarbookshop.catalogservice.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class BookValidationTests {
 
@@ -34,7 +33,8 @@ public class BookValidationTests {
         Book book = Book.of(null, "Book", "Author of this book", 12.3, "publisher");
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
         assertThat(violations).isNotEmpty();
-        assertThat(violations.iterator().next().getMessage()).isEqualTo("The book ISBN must be defined.");
+        assertThat(violations.iterator().next().getMessage())
+                .isEqualTo("The book ISBN must be defined.");
     }
 
     @Test
@@ -42,7 +42,8 @@ public class BookValidationTests {
         Book book = Book.of("123456789", "Book", "Author of this book", 12.3, "publisher");
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
         Assertions.assertEquals(1, violations.size());
-        Assertions.assertEquals("The ISBN format must be valid.", violations.iterator().next().getMessage());
+        Assertions.assertEquals(
+                "The ISBN format must be valid.", violations.iterator().next().getMessage());
     }
 
     @Test
@@ -50,7 +51,8 @@ public class BookValidationTests {
         Book book = Book.of("1234567890", null, "Author of this book", 12.3, "publisher");
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
         assertThat(violations).isNotEmpty();
-        assertThat(violations.iterator().next().getMessage()).isEqualTo("The book title must be defined.");
+        assertThat(violations.iterator().next().getMessage())
+                .isEqualTo("The book title must be defined.");
     }
 
     @Test
@@ -58,7 +60,8 @@ public class BookValidationTests {
         Book book = Book.of("1234567890", "title", null, 12.3, "publisher");
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
         assertThat(violations).isNotEmpty();
-        assertThat(violations.iterator().next().getMessage()).isEqualTo("The book author must be defined.");
+        assertThat(violations.iterator().next().getMessage())
+                .isEqualTo("The book author must be defined.");
     }
 
     @Test
@@ -66,7 +69,8 @@ public class BookValidationTests {
         Book book = Book.of("1234567890", "title", "author", null, "publisher");
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
         assertThat(violations).isNotEmpty();
-        assertThat(violations.iterator().next().getMessage()).isEqualTo("The book price must be defined.");
+        assertThat(violations.iterator().next().getMessage())
+                .isEqualTo("The book price must be defined.");
     }
 
     @Test
@@ -74,7 +78,8 @@ public class BookValidationTests {
         Book book = Book.of("1234567890", "title", "author", 0.0, "publisher");
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
         assertThat(violations).isNotEmpty();
-        assertThat(violations.iterator().next().getMessage()).isEqualTo("The book price must be greater than zero.");
+        assertThat(violations.iterator().next().getMessage())
+                .isEqualTo("The book price must be greater than zero.");
     }
 
     @Test
@@ -82,6 +87,7 @@ public class BookValidationTests {
         Book book = Book.of("1234567890", "title", "author", -2.3, "publisher");
         Set<ConstraintViolation<Book>> violations = validator.validate(book);
         assertThat(violations).isNotEmpty();
-        assertThat(violations.iterator().next().getMessage()).isEqualTo("The book price must be greater than zero.");
+        assertThat(violations.iterator().next().getMessage())
+                .isEqualTo("The book price must be greater than zero.");
     }
 }

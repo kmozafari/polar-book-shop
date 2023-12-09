@@ -1,5 +1,8 @@
 package com.polarbookshop.orderservice.order.web;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
@@ -7,15 +10,10 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
 import org.springframework.boot.test.json.ObjectContent;
 
-import java.io.IOException;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 @JsonTest
 public class OrderRequestJsonTests {
 
-    @Autowired
-    private JacksonTester<OrderRequest> jacksonTester;
+    @Autowired private JacksonTester<OrderRequest> jacksonTester;
 
     @Test
     public void testSerialize() throws IOException {
@@ -27,14 +25,16 @@ public class OrderRequestJsonTests {
 
     @Test
     public void testDeserialize() throws IOException {
-        String orderRequestJson = """
+        String orderRequestJson =
+                """
                 {
                     "isbn":"1234567890",
                     "quantity":3
                 }
                 """;
         ObjectContent<OrderRequest> orderRequest = jacksonTester.parse(orderRequestJson);
-        assertThat(orderRequest).usingRecursiveComparison()
+        assertThat(orderRequest)
+                .usingRecursiveComparison()
                 .isEqualTo(new OrderRequest("1234567890", 3));
     }
 }

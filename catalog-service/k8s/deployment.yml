@@ -33,3 +33,5 @@ spec:
               value: http://config-service
             - name: SPRING_PROFILES_ACTIVE
               value: testdata
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+              value: http://polar-keycloak/realms/PolarBookshop

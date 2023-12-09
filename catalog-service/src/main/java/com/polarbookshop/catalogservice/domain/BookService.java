@@ -29,21 +29,25 @@ public class BookService {
     }
 
     public Book editBookDetails(String isbn, Book book) {
-        return repository.findByIsbn(isbn)
-                .map(existingBook -> {
-                    Book bookToUpdate = new Book(
-                            existingBook.id(),
-                            isbn,
-                            book.title(),
-                            book.author(),
-                            book.price(),
-                            book.publisher(),
-                            existingBook.createdDate(),
-                            existingBook.lastModifiedDate(),
-                            existingBook.version()
-                    );
-                    return repository.save(bookToUpdate);
-                })
+        return repository
+                .findByIsbn(isbn)
+                .map(
+                        existingBook -> {
+                            Book bookToUpdate =
+                                    new Book(
+                                            existingBook.id(),
+                                            isbn,
+                                            book.title(),
+                                            book.author(),
+                                            book.price(),
+                                            book.publisher(),
+                                            existingBook.createdDate(),
+                                            existingBook.lastModifiedDate(),
+                                            existingBook.createdBy(),
+                                            existingBook.lastModifiedBy(),
+                                            existingBook.version());
+                            return repository.save(bookToUpdate);
+                        })
                 .orElseGet(() -> addBookToCatalog(book));
     }
 }

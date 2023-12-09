@@ -1,19 +1,20 @@
 package com.polarbookshop.catalogservice.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.polarbookshop.catalogservice.config.DataConfig;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.StreamSupport;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJdbcTest
 @Import(DataConfig.class)
@@ -21,27 +22,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("integration")
 public class BookRepositoryJdbcTests {
 
-    @Autowired
-    private BookRepository bookRepository;
+    @Autowired private BookRepository bookRepository;
 
-    @Autowired
-    private JdbcAggregateTemplate jdbcAggregateTemplate;
+    @Autowired private JdbcAggregateTemplate jdbcAggregateTemplate;
 
     @Test
     void findAllBooks() {
-        var book1 = Book.of("1234567893", "title1", "author1", 12.0,"publisher");
-        var book2 = Book.of("1234567894", "title2", "author2", 13.0,"publisher");
+        var book1 = Book.of("1234567893", "title1", "author1", 12.0, "publisher");
+        var book2 = Book.of("1234567894", "title2", "author2", 13.0, "publisher");
         jdbcAggregateTemplate.saveAll(List.of(book1, book2));
         Iterable<Book> actualBooks = bookRepository.findAll();
-        assertThat(StreamSupport.stream(actualBooks.spliterator(), true)
-                .filter(book -> book.isbn().equals("1234567893") || book.isbn().equals("1234567894"))
-                .toList().size()).isEqualTo(2);
+        assertThat(
+                        StreamSupport.stream(actualBooks.spliterator(), true)
+                                .filter(
+                                        book ->
+                                                book.isbn().equals("1234567893")
+                                                        || book.isbn().equals("1234567894"))
+                                .toList()
+                                .size())
+                .isEqualTo(2);
     }
 
     @Test
     void findBookByIsbnWhenExisting() {
         var bookIsbn = "1234567895";
-        jdbcAggregateTemplate.insert(Book.of(bookIsbn, "title", "author", 12.4,"publisher"));
+        jdbcAggregateTemplate.insert(Book.of(bookIsbn, "title", "author", 12.4, "publisher"));
         Optional<Book> actualBook = bookRepository.findByIsbn(bookIsbn);
         assertThat(actualBook).isPresent();
         assertThat(actualBook.get().isbn()).isEqualTo(bookIsbn);
@@ -56,7 +61,7 @@ public class BookRepositoryJdbcTests {
     @Test
     void existsByIsbnWhenExisting() {
         var bookIsbn = "123456789";
-        jdbcAggregateTemplate.insert(Book.of(bookIsbn, "title", "author", 12.4,"publisher"));
+        jdbcAggregateTemplate.insert(Book.of(bookIsbn, "title", "author", 12.4, "publisher"));
         boolean exists = bookRepository.existsByIsbn(bookIsbn);
         assertThat(exists).isTrue();
     }
@@ -70,9 +75,44 @@ public class BookRepositoryJdbcTests {
     @Test
     void deleteByIsbn() {
         String isbn = "1234567897";
-        Book persistedBook = jdbcAggregateTemplate.insert(Book.of(isbn, "title", "author", 12.4,"publisher"));
+        Book persistedBook =
+                jdbcAggregateTemplate.insert(Book.of(isbn, "title", "author", 12.4, "publisher"));
         bookRepository.deleteByIsbn(isbn);
         Book book = jdbcAggregateTemplate.findById(persistedBook.id(), Book.class);
         assertThat(book).isNull();
+    }
+
+    @Test
+    void whenCreatedBookNotAuthenticatedThenNoAuditMetaData() {
+        var book1 = Book.of("1234567893", "title1", "author1", 12.0, "publisher");
+        jdbcAggregateTemplate.saveAll(List.of(book1));
+        Iterable<Book> actualBooks = bookRepository.findAll();
+        assertThat(
+                        StreamSupport.stream(actualBooks.spliterator(), true)
+                                .filter(
+                                        book ->
+                                                book.isbn().equals("1234567893")
+                                                        && book.createdBy() == null)
+                                .toList()
+                                .size())
+                .isEqualTo(1);
+    }
+
+    @Test
+    @WithMockUser(username = "kourosh")
+    void whenCreatedBookWithAuthenticatedThenAuditMetaData() {
+        var book1 = Book.of("1234567893", "title1", "author1", 12.0, "publisher");
+        jdbcAggregateTemplate.saveAll(List.of(book1));
+        Iterable<Book> actualBooks = bookRepository.findAll();
+        assertThat(
+                        StreamSupport.stream(actualBooks.spliterator(), true)
+                                .filter(
+                                        book ->
+                                                book.isbn().equals("1234567893")
+                                                        && Objects.equals(
+                                                                book.createdBy(), "kourosh"))
+                                .toList()
+                                .size())
+                .isEqualTo(1);
     }
 }

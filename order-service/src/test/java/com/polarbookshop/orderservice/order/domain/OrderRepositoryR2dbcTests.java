@@ -1,10 +1,12 @@
 package com.polarbookshop.orderservice.order.domain;
 
 import com.polarbookshop.orderservice.config.DataConfig;
+import java.util.Objects;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -20,10 +22,10 @@ import reactor.test.StepVerifier;
 public class OrderRepositoryR2dbcTests {
 
     @Container
-    private static PostgreSQLContainer<?> postgresql = new PostgreSQLContainer<>(DockerImageName.parse("postgres:14.4"));
+    private static PostgreSQLContainer<?> postgresql =
+            new PostgreSQLContainer<>(DockerImageName.parse("postgres:14.4"));
 
-    @Autowired
-    private OrderRepository orderRepository;
+    @Autowired private OrderRepository orderRepository;
 
     @DynamicPropertySource
     public static void postgresqlProperties(DynamicPropertyRegistry registry) {
@@ -34,7 +36,8 @@ public class OrderRepositoryR2dbcTests {
     }
 
     private static String r2dbcUrl() {
-        return String.format("r2dbc:postgresql://%s:%s/%s",
+        return String.format(
+                "r2dbc:postgresql://%s:%s/%s",
                 postgresql.getHost(),
                 postgresql.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT),
                 postgresql.getDatabaseName());
@@ -43,9 +46,7 @@ public class OrderRepositoryR2dbcTests {
     @Test
     public void findOrderByIdWhenNotExisting() {
         Mono<Order> order = orderRepository.findById(1000L);
-        StepVerifier.create(order)
-                .expectNextCount(0)
-                .verifyComplete();
+        StepVerifier.create(order).expectNextCount(0).verifyComplete();
     }
 
     @Test
@@ -57,4 +58,26 @@ public class OrderRepositoryR2dbcTests {
                 .verifyComplete();
     }
 
+    @Test
+    public void whenCreateOrderNotAuthenticatedTHenNoAuditMetadata() {
+        Order rejectOrder = OrderService.buildRejectOrder("1234567893", 2);
+        StepVerifier.create(orderRepository.save(rejectOrder))
+                .expectNextMatches(
+                        order ->
+                                Objects.isNull(order.createdBy())
+                                        && Objects.isNull(order.lastModifiedBy()))
+                .verifyComplete();
+    }
+
+    @Test
+    @WithMockUser(username = "kourosh")
+    public void whenCreateOrderAuthenticatedThenAuditMetadata() {
+        Order rejectOrder = OrderService.buildRejectOrder("1234567893", 2);
+        StepVerifier.create(orderRepository.save(rejectOrder))
+                .expectNextMatches(
+                        order ->
+                                "kourosh".equals(order.createdBy())
+                                        && "kourosh".equals(order.lastModifiedBy()))
+                .verifyComplete();
+    }
 }
