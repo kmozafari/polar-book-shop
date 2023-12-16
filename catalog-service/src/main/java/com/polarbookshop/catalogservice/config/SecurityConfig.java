@@ -23,6 +23,8 @@ public class SecurityConfig {
                                 authorize
                                         .requestMatchers(HttpMethod.GET, "/", "/books/**")
                                         .permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/actuator/**")
+                                        .permitAll()
                                         .anyRequest()
                                         .hasRole("employee"))
                 .oauth2ResourceServer(configurer -> configurer.jwt(Customizer.withDefaults()))

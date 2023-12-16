@@ -31,4 +31,16 @@ spec:
               value: http://config-service
             - name: SPRING_RABBITMQ_HOST
               value: polar-rabbitmq
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 9003
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 9003
+            initialDelaySeconds: 5
+            periodSeconds: 15
 
