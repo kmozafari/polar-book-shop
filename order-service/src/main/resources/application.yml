@@ -64,12 +64,15 @@ management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: health,prometheus
   endpoint:
     health:
       show-details: ALWAYS
       show-components: ALWAYS
       probes:
         enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
 polar:
   catalog-service-uri: http://localhost:9001

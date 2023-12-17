@@ -97,7 +97,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: health,prometheus
   endpoint:
     health:
       show-details: ALWAYS
@@ -107,6 +107,9 @@ management:
       group:
         readiness:
           include: readinessState,redis
+  metrics:
+    tags:
+      application: ${spring.application.name}
 resilience4j:
   circuitbreaker:
     configs:
