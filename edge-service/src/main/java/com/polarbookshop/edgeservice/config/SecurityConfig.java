@@ -33,6 +33,8 @@ public class SecurityConfig {
                                 .permitAll()
                                 .pathMatchers(HttpMethod.GET, "/books/**")
                                 .permitAll()
+                                .pathMatchers("/actuator/**")
+                                .permitAll()
                                 .anyExchange().authenticated())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .oauth2Login(Customizer.withDefaults())
