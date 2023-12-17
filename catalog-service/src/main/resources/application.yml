@@ -51,5 +51,8 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+logging:
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 polar:
   greeting: Welcome to the local book catalog!

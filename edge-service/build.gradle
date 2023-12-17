@@ -34,6 +34,7 @@ repositories {
 ext {
     set('springCloudVersion', "2022.0.4")
     set('testcontainersVersion', '1.19.0')
+    set('otelVersion', '1.32.0')
 }
 
 dependencies {
@@ -46,6 +47,7 @@ dependencies {
     implementation 'org.springframework.session:spring-session-data-redis'
     runtimeOnly 'io.github.resilience4j:resilience4j-micrometer'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+    runtimeOnly "io.opentelemetry.javaagent:opentelemetry-javaagent:${otelVersion}"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.testcontainers:junit-jupiter'

@@ -46,6 +46,7 @@ ext {
     set('springCloudVersion', '2022.0.4')
     set('testcontainersVersion', '1.19.0')
     set('testKeycloakVersion', '2.6.0')
+    set('otelVersion', '1.32.0')
 }
 
 dependencies {
@@ -62,6 +63,7 @@ dependencies {
     runtimeOnly 'org.springframework:spring-jdbc'
     runtimeOnly 'org.postgresql:r2dbc-postgresql'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+    runtimeOnly "io.opentelemetry.javaagent:opentelemetry-javaagent:${otelVersion}"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
     testImplementation 'org.springframework.cloud:spring-cloud-stream-test-binder'
