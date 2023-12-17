@@ -51,6 +51,10 @@ dependencyManagement {
     }
 }
 
+springBoot {
+    buildInfo()
+}
+
 tasks.named('bootBuildImage') {
     builder = 'paketobuildpacks/builder-jammy-base:latest'
 }
