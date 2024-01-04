@@ -41,8 +41,7 @@ jobs:
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
       - name: Validate Kubernetes manifests
-        uses: actions/checkout@v2
-        uses: yokawasa/action-setup-kube-tools@v0.9.2
+        uses: yokawasa/action-setup-kube-tools@v0.9.3
         with:
           setup-tools: |
             kubeconform
