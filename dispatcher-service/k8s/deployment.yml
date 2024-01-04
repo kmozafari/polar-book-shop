@@ -31,10 +31,6 @@ spec:
           env:
             - name: BPL_JVM_THREAD_COUNT
               value: "50"
-            - name: SPRING_CLOUD_CONFIG_URI
-              value: http://config-service
-            - name: SPRING_RABBITMQ_HOST
-              value: polar-rabbitmq
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
