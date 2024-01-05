@@ -40,12 +40,17 @@ jobs:
         if: success() || failure()
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
-      - name: Validate Kubernetes manifests
-        run: echo "${{ github.token }}" | docker login https://ghcr.io -u ${GITHUB_ACTOR} --password-stdin
-      - uses: docker://ghcr.io/yannh/kubeconform:latest
+      - name: Download tools - kubeconform - kustomize
+        uses: yokawasa/action-setup-kube-tools@v0.9.3
         with:
-          entrypoint: '/kubeconform'
-          args: "-strict -summary -output json order-service/k8s/"
+          setup-tools: |
+            kubeconform
+            kustomize
+          kubeconform: '0.5.0'
+          kustomize: '4.5.7'
+      - name: Validate Kubernetes manifests
+        run: |
+          kustomize build order-service/k8s | kubeconform -verbose
 
   package:
     name: Package and Publish
