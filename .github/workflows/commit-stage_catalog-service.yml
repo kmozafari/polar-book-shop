@@ -40,7 +40,8 @@ jobs:
         if: success() || failure()
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
-      - name: Validate Kubernetes manifests
+
+      - name: Download tools
         uses: yokawasa/action-setup-kube-tools@v0.9.3
         with:
           setup-tools: |
@@ -48,6 +49,7 @@ jobs:
             kustomize
           kubeconform: '0.5.0'
           kustomize: '4.5.7'
+      - name: Validate Kubernetes manifests
         run: |
           kustomize build catalog-service/k8s | kubeconform -verbose
   #          kustomize build apps/my-web-app/overlays/environments/prod | kubeconform -verbose
