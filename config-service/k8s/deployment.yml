@@ -31,6 +31,9 @@ spec:
           env:
             - name: BPL_JVM_THREAD_COUNT
               value: "50"
+          volumeMounts:
+            - name: config-config-volume
+              mountPath: /workspace/config
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
@@ -43,4 +46,8 @@ spec:
               port: 8888
             initialDelaySeconds: 5
             periodSeconds: 15
+      volumes:
+        - name: config-config-volume
+          configMap:
+            name: config-config
 
