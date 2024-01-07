@@ -4,6 +4,7 @@ on:
     paths:
       - 'order-service/**'
       - '.github/workflows/commit-stage_order-service.yml'
+      - '.github/workflows/acceptance-stage_order-service.yml'
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: kmozafari/order-service

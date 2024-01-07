@@ -4,6 +4,7 @@ on:
     paths:
       - 'edge-service/**'
       - '.github/workflows/commit-stage_edge-service.yml'
+      - '.github/workflows/acceptance-stage_edge-service.yml'
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: kmozafari/edge-service

@@ -4,6 +4,7 @@ on:
     paths:
       - 'dispatcher-service/**'
       - '.github/workflows/commit-stage_dispatcher-service.yml'
+      - '.github/workflows/acceptance-stage_dispatcher-service.yml'
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: kmozafari/dispatcher-service
