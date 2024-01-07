@@ -4,6 +4,7 @@ on:
     paths:
       - 'catalog-service/**'
       - '.github/workflows/commit-stage_catalog-service.yml'
+      - '.github/workflows/acceptance-stage_catalog-service.yml'
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: kmozafari/catalog-service
