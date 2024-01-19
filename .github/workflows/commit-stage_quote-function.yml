@@ -69,6 +69,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build, unit tests and integration test (native)
         run: |
+          cd quote-function
           chmod +x gradlew
           ./gradlew nativeBuild
 
